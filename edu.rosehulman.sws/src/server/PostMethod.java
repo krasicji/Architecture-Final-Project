@@ -59,7 +59,7 @@ public class PostMethod implements IRequestMethod {
 		// Get root directory path from server
 		String rootDirectory = server.getRootDirectory();
 		// Combine them together to form absolute file path
-		File file = new File(rootDirectory + uri);
+		File file = new File(rootDirectory + System.getProperty("file.separator") + uri);
 		/*
 		// Check if the file exists
 		if(file.exists()) {
