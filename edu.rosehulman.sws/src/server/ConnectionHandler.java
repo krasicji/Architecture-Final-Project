@@ -130,25 +130,7 @@ public class ConnectionHandler implements Runnable {
 		}
 		
 		// We reached here means no error so far, so lets process further
-		try {
-			// Fill in the code to create a response for version mismatch.
-			// You may want to use constants such as Protocol.VERSION, Protocol.NOT_SUPPORTED_CODE, and more.
-			// You can check if the version matches as follows
-			if(!request.getVersion().equalsIgnoreCase(Protocol.VERSION)) {
-				// Here you checked that the "Protocol.VERSION" string is not equal to the  
-				// "request.version" string ignoring the case of the letters in both strings
-				response = HttpResponseFactory.create505NotSupported(Protocol.CLOSE);
-			}
-			else if(request.getMethod().equalsIgnoreCase(Protocol.GET)) {
-				response = (new GetMethod()).handle(request, server);
-			}
-			else if(request.getMethod().equalsIgnoreCase(Protocol.POST)) {
-				response = (new PostMethod()).handle(request, server);
-			}
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
+		processRequest(request, response);
 		
 
 		// TODO: So far response could be null for protocol version mismatch.
@@ -174,5 +156,28 @@ public class ConnectionHandler implements Runnable {
 		// Get the end time
 		long end = System.currentTimeMillis();
 		this.server.incrementServiceTime(end-start);
+	}
+	
+	public void processRequest(HttpRequest request,HttpResponse response){
+		
+				try {
+					// Fill in the code to create a response for version mismatch.
+					// You may want to use constants such as Protocol.VERSION, Protocol.NOT_SUPPORTED_CODE, and more.
+					// You can check if the version matches as follows
+					if(!request.getVersion().equalsIgnoreCase(Protocol.VERSION)) {
+						// Here you checked that the "Protocol.VERSION" string is not equal to the  
+						// "request.version" string ignoring the case of the letters in both strings
+						response = HttpResponseFactory.create505NotSupported(Protocol.CLOSE);
+					}
+					else if(request.getMethod().equalsIgnoreCase(Protocol.GET)) {
+						response = (new GetMethod()).handle(request, server);
+					}
+					else if(request.getMethod().equalsIgnoreCase(Protocol.POST)) {
+						response = (new PostMethod()).handle(request, server);
+					}
+				}
+				catch(Exception e) {
+					e.printStackTrace();
+				}
 	}
 }
