@@ -29,7 +29,6 @@
 package server;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 import protocol.HttpRequest;
@@ -49,10 +48,7 @@ public class PostMethod implements IRequestMethod {
 	@Override
 	public HttpResponse handle(HttpRequest request, Server server) {
 		HttpResponse response = null;
-//		Map<String, String> header = request.getHeader();
-//		String date = header.get("if-modified-since");
-//		String hostName = header.get("host");
-//		
+
 		// Handling GET request here
 		// Get relative URI path from request
 		String uri = request.getUri();
@@ -60,49 +56,23 @@ public class PostMethod implements IRequestMethod {
 		String rootDirectory = server.getRootDirectory();
 		// Combine them together to form absolute file path
 		File file = new File(rootDirectory + System.getProperty("file.separator") + uri);
-		/*
-		// Check if the file exists
-		if(file.exists()) {
-			if(file.isDirectory()) { // Its a directory - We don't have to override
-				File newFile = createFile();
 				
-				// Look for default index.html file in a directory
-				String location = rootDirectory + uri + System.getProperty("file.separator") + Protocol.DEFAULT_FILE;
-				file = new File(location);
-				if(file.exists()) {
-					// Lets create 200 OK response
-					response = HttpResponseFactory.create200OK(file, Protocol.OPEN);
-				}
-				else {
-					// File does not exist so lets create 404 file not found code
-					response = HttpResponseFactory.create404NotFound(Protocol.CLOSE);
-				}
-			}
-			else { // Its a file - We have to override*/
-				
-				// Get the text from the request body
-				String body = request.getBody().toString();
-				
-				// Override the file with the request body
-				try {
-					FileOutputStream fileOut = new FileOutputStream(file);
-					fileOut.write(body.getBytes());
-					fileOut.close();
-				} catch (Exception e) {
-					// This should never happen.
-					e.printStackTrace();
-				}
-				
-				// Lets create 200 OK response
-				response = HttpResponseFactory.create200OK(file, Protocol.OPEN);
-				/*}
-		}
-		else {
-			File newFile = createFile();
-			// File does not exist so lets create 404 file not found code
-			response = HttpResponseFactory.create404NotFound(Protocol.CLOSE);
-		}*/
+		// Get the text from the request body
+		String body = new String(request.getBody());
 		
+		// Override the file with the request body
+		try {
+			FileOutputStream fileOut = new FileOutputStream(file);
+			fileOut.write(body.getBytes());
+			fileOut.close();
+		} catch (Exception e) {
+			// This should never happen.
+			e.printStackTrace();
+		}
+		
+		// Lets create 200 OK response
+		response = HttpResponseFactory.create200OK(file, Protocol.OPEN);
+
 		return response;
 	}
 	
