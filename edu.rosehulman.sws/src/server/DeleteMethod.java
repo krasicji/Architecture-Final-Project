@@ -1,6 +1,6 @@
 /*
- * PostMethod.java
- * Apr 22, 2015
+ * DeleteMethod.java
+ * Apr 24, 2015
  *
  * Simple Web Server (SWS) for EE407/507 and CS455/555
  * 
@@ -29,51 +29,50 @@
 package server;
 
 import java.io.File;
-import java.io.FileOutputStream;
 
 import protocol.HttpRequest;
 import protocol.HttpResponse;
 import protocol.Protocol;
 import protocol.Response200OK;
+import protocol.Response304NotModified;
+import protocol.Response404NotFound;
 
 /**
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
-public class PostMethod implements IRequestMethod {
+public class DeleteMethod implements IRequestMethod {
 
 	/* (non-Javadoc)
 	 * @see server.IRequestMethod#handle(protocol.HttpRequest, server.Server)
 	 */
 	@Override
 	public HttpResponse handle(HttpRequest request, Server server) {
-		HttpResponse response = null;
 
-		// Handling POST request here
+		// Handling DELETE request here
 		// Get relative URI path from request
 		String uri = request.getUri();
 		// Get root directory path from server
 		String rootDirectory = server.getRootDirectory();
 		// Combine them together to form absolute file path
 		File file = new File(rootDirectory + System.getProperty("file.separator") + uri);
-				
-		// Get the text from the request body
-		String body = new String(request.getBody());
 		
-		// Override the file with the request body
-		try {
-			FileOutputStream fileOut = new FileOutputStream(file);
-			fileOut.write(body.getBytes());
-			fileOut.close();
-		} catch (Exception e) {
-			// This should never happen.
-			e.printStackTrace();
+		if(file.exists()) {
+			// Attempts to delete the file
+			if(file.delete()) {
+				//File successfully deleted.
+				return new Response200OK(null, Protocol.OPEN);
+			}
+			else {
+				// File couldn't be deleted - could be because the folder wasn't empty.
+				// Returning not modified because nothing changed.
+				return new Response304NotModified(Protocol.CLOSE);
+			}
 		}
-		
-		// Lets create 200 OK response
-		response = new Response200OK(file, Protocol.OPEN);
-
-		return response;
+		else {
+			// File does not exist so lets create 404 file not found code
+			return new Response404NotFound(Protocol.CLOSE);
+		}
 	}
 
 }

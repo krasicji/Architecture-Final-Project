@@ -29,9 +29,10 @@ import java.util.Map;
 
 import protocol.HttpRequest;
 import protocol.HttpResponse;
-import protocol.HttpResponseFactory;
 import protocol.Protocol;
 import protocol.ProtocolException;
+import protocol.Response400BadRequest;
+import protocol.Response505NotSupported;
 
 /**
  * This class is responsible for handling a incoming request
@@ -53,6 +54,8 @@ public class ConnectionHandler implements Runnable {
 		reqeustMethods = new HashMap<String, IRequestMethod>();
 		reqeustMethods.put(Protocol.GET, new GetMethod());
 		reqeustMethods.put(Protocol.POST, new PostMethod());
+		reqeustMethods.put(Protocol.PUT, new PutMethod());
+		reqeustMethods.put(Protocol.DELETE, new DeleteMethod());
 	}
 	
 	/**
@@ -107,14 +110,14 @@ public class ConnectionHandler implements Runnable {
 			// Protocol.BAD_REQUEST_CODE and Protocol.NOT_SUPPORTED_CODE
 			int status = pe.getStatus();
 			if(status == Protocol.BAD_REQUEST_CODE) {
-				response = HttpResponseFactory.create400BadRequest(Protocol.CLOSE);
+				response = new Response400BadRequest(Protocol.CLOSE);
 			}
 			// TODO: Handle version not supported code as well
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 			// For any other error, we will create bad request response as well
-			response = HttpResponseFactory.create400BadRequest(Protocol.CLOSE);
+			response = new Response400BadRequest(Protocol.CLOSE);
 		}
 		
 		if(response != null) {
@@ -144,7 +147,7 @@ public class ConnectionHandler implements Runnable {
 			if(!request.getVersion().equalsIgnoreCase(Protocol.VERSION)) {
 				// Here you checked that the "Protocol.VERSION" string is not equal to the  
 				// "request.version" string ignoring the case of the letters in both strings
-				response = HttpResponseFactory.create505NotSupported(Protocol.CLOSE);
+				response = new Response505NotSupported(Protocol.CLOSE);
 			}
 			else 
 			{
@@ -162,7 +165,7 @@ public class ConnectionHandler implements Runnable {
 		// after a response object is created for protocol version mismatch.
 		if(response == null) 
 		{
-			response = HttpResponseFactory.create400BadRequest(Protocol.CLOSE);
+			response = new Response400BadRequest(Protocol.CLOSE);
 		}
 		
 		try{

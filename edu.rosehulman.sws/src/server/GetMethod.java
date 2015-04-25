@@ -32,8 +32,9 @@ import java.io.File;
 
 import protocol.HttpRequest;
 import protocol.HttpResponse;
-import protocol.HttpResponseFactory;
 import protocol.Protocol;
+import protocol.Response200OK;
+import protocol.Response404NotFound;
 
 /**
  * 
@@ -63,21 +64,21 @@ public class GetMethod implements IRequestMethod {
 				file = new File(location);
 				if(file.exists()) {
 					// Lets create 200 OK response
-					response = HttpResponseFactory.create200OK(file, Protocol.OPEN);
+					response = new Response200OK(file, Protocol.OPEN);
 				}
 				else {
 					// File does not exist so lets create 404 file not found code
-					response = HttpResponseFactory.create404NotFound(Protocol.CLOSE);
+					response = new Response404NotFound(Protocol.CLOSE);
 				}
 			}
 			else { // Its a file
 				// Lets create 200 OK response
-				response = HttpResponseFactory.create200OK(file, Protocol.OPEN);
+				response = new Response200OK(file, Protocol.OPEN);
 			}
 		}
 		else {
 			// File does not exist so lets create 404 file not found code
-			response = HttpResponseFactory.create404NotFound(Protocol.CLOSE);
+			response = new Response404NotFound(Protocol.CLOSE);
 		}
 		
 		return response;

@@ -1,6 +1,6 @@
 /*
- * PostMethod.java
- * Apr 22, 2015
+ * PutMethod.java
+ * Apr 24, 2015
  *
  * Simple Web Server (SWS) for EE407/507 and CS455/555
  * 
@@ -30,6 +30,8 @@ package server;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
 
 import protocol.HttpRequest;
 import protocol.HttpResponse;
@@ -40,7 +42,7 @@ import protocol.Response200OK;
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
-public class PostMethod implements IRequestMethod {
+public class PutMethod implements IRequestMethod {
 
 	/* (non-Javadoc)
 	 * @see server.IRequestMethod#handle(protocol.HttpRequest, server.Server)
@@ -56,13 +58,25 @@ public class PostMethod implements IRequestMethod {
 		String rootDirectory = server.getRootDirectory();
 		// Combine them together to form absolute file path
 		File file = new File(rootDirectory + System.getProperty("file.separator") + uri);
-				
+
+		byte[] contents = new byte[0];
+		if(file.exists()) {
+			try {
+				contents = Files.readAllBytes(file.toPath());
+			} catch (IOException e1) {
+				//Issue reading the contents of the file
+				e1.printStackTrace();
+			}
+		}
+		
 		// Get the text from the request body
 		String body = new String(request.getBody());
 		
-		// Override the file with the request body
+		// Append or create the file with the request body
 		try {
 			FileOutputStream fileOut = new FileOutputStream(file);
+			if (contents.length > 0)
+				fileOut.write(contents);
 			fileOut.write(body.getBytes());
 			fileOut.close();
 		} catch (Exception e) {
@@ -75,5 +89,4 @@ public class PostMethod implements IRequestMethod {
 
 		return response;
 	}
-
 }
