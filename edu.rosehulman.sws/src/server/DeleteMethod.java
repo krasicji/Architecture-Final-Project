@@ -59,12 +59,12 @@ public class DeleteMethod implements IRequestMethod {
 		
 		if(file.exists()) {
 			// Attempts to delete the file
-			if(file.delete()) {
+			if(!file.isDirectory() && file.delete()) {
 				//File successfully deleted.
 				return new Response200OK(null, Protocol.OPEN);
 			}
 			else {
-				// File couldn't be deleted - could be because the folder wasn't empty.
+				// File couldn't be deleted, or file was a folder.
 				// Returning not modified because nothing changed.
 				return new Response304NotModified(Protocol.CLOSE);
 			}

@@ -35,6 +35,7 @@ import protocol.HttpRequest;
 import protocol.HttpResponse;
 import protocol.Protocol;
 import protocol.Response200OK;
+import protocol.Response400BadRequest;
 
 /**
  * 
@@ -47,8 +48,6 @@ public class PostMethod implements IRequestMethod {
 	 */
 	@Override
 	public HttpResponse handle(HttpRequest request, Server server) {
-		HttpResponse response = null;
-
 		// Handling POST request here
 		// Get relative URI path from request
 		String uri = request.getUri();
@@ -56,6 +55,12 @@ public class PostMethod implements IRequestMethod {
 		String rootDirectory = server.getRootDirectory();
 		// Combine them together to form absolute file path
 		File file = new File(rootDirectory + System.getProperty("file.separator") + uri);
+		
+		if(file.exists() && file.isDirectory())
+		{
+			// We cannot write to a directory, only a file. Bad Request
+			return new Response400BadRequest(Protocol.CLOSE);
+		}
 				
 		// Get the text from the request body
 		String body = new String(request.getBody());
@@ -71,9 +76,7 @@ public class PostMethod implements IRequestMethod {
 		}
 		
 		// Lets create 200 OK response
-		response = new Response200OK(file, Protocol.OPEN);
-
-		return response;
+		return new Response200OK(file, Protocol.OPEN);
 	}
 
 }

@@ -37,6 +37,7 @@ import protocol.HttpRequest;
 import protocol.HttpResponse;
 import protocol.Protocol;
 import protocol.Response200OK;
+import protocol.Response400BadRequest;
 
 /**
  * 
@@ -49,7 +50,6 @@ public class PutMethod implements IRequestMethod {
 	 */
 	@Override
 	public HttpResponse handle(HttpRequest request, Server server) {
-		HttpResponse response = null;
 
 		// Handling POST request here
 		// Get relative URI path from request
@@ -61,11 +61,20 @@ public class PutMethod implements IRequestMethod {
 
 		byte[] contents = new byte[0];
 		if(file.exists()) {
-			try {
-				contents = Files.readAllBytes(file.toPath());
-			} catch (IOException e1) {
-				//Issue reading the contents of the file
-				e1.printStackTrace();
+			if(!file.isDirectory())
+			{
+				try {
+					contents = Files.readAllBytes(file.toPath());
+				} catch (IOException e1) {
+					//Issue reading the contents of the file
+					e1.printStackTrace();
+				}
+			}
+			else
+			{
+				// If the file is a directory, we cannot append to it.
+				// Therefore, it is a bad request.
+				return new Response400BadRequest(Protocol.CLOSE);
 			}
 		}
 		
@@ -85,8 +94,6 @@ public class PutMethod implements IRequestMethod {
 		}
 		
 		// Lets create 200 OK response
-		response = new Response200OK(file, Protocol.OPEN);
-
-		return response;
+		return new Response200OK(file, Protocol.OPEN);
 	}
 }
