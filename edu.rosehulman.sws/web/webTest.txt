@@ -1,0 +1,6 @@
+------WebKitFormBoundaryF8roPCvNt8qjPfFW
+Content-Disposition: form-data; name="file1"; filename="webTest.txt"
+Content-Type: text/plain
+
+Test JK
+------WebKitFormBoundaryF8roPCvNt8qjPfFW--
