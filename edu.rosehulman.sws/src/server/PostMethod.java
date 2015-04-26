@@ -25,7 +25,7 @@
  * NY 13699-5722
  * http://clarkson.edu/~rupakhcr
  */
- 
+
 package server;
 
 import java.io.File;
@@ -43,9 +43,6 @@ import protocol.Response400BadRequest;
  */
 public class PostMethod implements IRequestMethod {
 
-	/* (non-Javadoc)
-	 * @see server.IRequestMethod#handle(protocol.HttpRequest, server.Server)
-	 */
 	@Override
 	public HttpResponse handle(HttpRequest request, Server server) {
 		// Handling POST request here
@@ -54,17 +51,17 @@ public class PostMethod implements IRequestMethod {
 		// Get root directory path from server
 		String rootDirectory = server.getRootDirectory();
 		// Combine them together to form absolute file path
-		File file = new File(rootDirectory + System.getProperty("file.separator") + uri);
-		
-		if(file.exists() && file.isDirectory())
-		{
+		File file = new File(rootDirectory
+				+ System.getProperty("file.separator") + uri);
+
+		if (file.exists() && file.isDirectory()) {
 			// We cannot write to a directory, only a file. Bad Request
 			return new Response400BadRequest(Protocol.CLOSE);
 		}
-				
+
 		// Get the text from the request body
 		String body = new String(request.getBody());
-		
+
 		// Override the file with the request body
 		try {
 			FileOutputStream fileOut = new FileOutputStream(file);
@@ -74,7 +71,7 @@ public class PostMethod implements IRequestMethod {
 			// This should never happen.
 			e.printStackTrace();
 		}
-		
+
 		// Lets create 200 OK response
 		return new Response200OK(file, Protocol.OPEN);
 	}

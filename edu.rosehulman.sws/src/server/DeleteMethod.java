@@ -25,7 +25,7 @@
  * NY 13699-5722
  * http://clarkson.edu/~rupakhcr
  */
- 
+
 package server;
 
 import java.io.File;
@@ -43,9 +43,6 @@ import protocol.Response404NotFound;
  */
 public class DeleteMethod implements IRequestMethod {
 
-	/* (non-Javadoc)
-	 * @see server.IRequestMethod#handle(protocol.HttpRequest, server.Server)
-	 */
 	@Override
 	public HttpResponse handle(HttpRequest request, Server server) {
 
@@ -55,21 +52,20 @@ public class DeleteMethod implements IRequestMethod {
 		// Get root directory path from server
 		String rootDirectory = server.getRootDirectory();
 		// Combine them together to form absolute file path
-		File file = new File(rootDirectory + System.getProperty("file.separator") + uri);
-		
-		if(file.exists()) {
+		File file = new File(rootDirectory
+				+ System.getProperty("file.separator") + uri);
+
+		if (file.exists()) {
 			// Attempts to delete the file
-			if(!file.isDirectory() && file.delete()) {
-				//File successfully deleted.
+			if (!file.isDirectory() && file.delete()) {
+				// File successfully deleted.
 				return new Response200OK(null, Protocol.OPEN);
-			}
-			else {
+			} else {
 				// File couldn't be deleted, or file was a folder.
 				// Returning not modified because nothing changed.
 				return new Response304NotModified(Protocol.CLOSE);
 			}
-		}
-		else {
+		} else {
 			// File does not exist so lets create 404 file not found code
 			return new Response404NotFound(Protocol.CLOSE);
 		}

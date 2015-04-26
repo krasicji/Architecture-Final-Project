@@ -25,7 +25,7 @@
  * NY 13699-5722
  * http://clarkson.edu/~rupakhcr
  */
- 
+
 package server;
 
 import java.io.File;
@@ -45,10 +45,7 @@ public class GetMethod implements IRequestMethod {
 	@Override
 	public HttpResponse handle(HttpRequest request, Server server) {
 		HttpResponse response = null;
-//		Map<String, String> header = request.getHeader();
-//		String date = header.get("if-modified-since");
-//		String hostName = header.get("host");
-//		
+
 		// Handling GET request here
 		// Get relative URI path from request
 		String uri = request.getUri();
@@ -57,30 +54,30 @@ public class GetMethod implements IRequestMethod {
 		// Combine them together to form absolute file path
 		File file = new File(rootDirectory + uri);
 		// Check if the file exists
-		if(file.exists()) {
-			if(file.isDirectory()) {
+		if (file.exists()) {
+			if (file.isDirectory()) {
 				// Look for default index.html file in a directory
-				String location = rootDirectory + uri + System.getProperty("file.separator") + Protocol.DEFAULT_FILE;
+				String location = rootDirectory + uri
+						+ System.getProperty("file.separator")
+						+ Protocol.DEFAULT_FILE;
 				file = new File(location);
-				if(file.exists()) {
+				if (file.exists()) {
 					// Lets create 200 OK response
 					response = new Response200OK(file, Protocol.OPEN);
-				}
-				else {
-					// File does not exist so lets create 404 file not found code
+				} else {
+					// File does not exist so lets create 404 file not found
+					// code
 					response = new Response404NotFound(Protocol.CLOSE);
 				}
-			}
-			else { // Its a file
-				// Lets create 200 OK response
+			} else { // Its a file
+						// Lets create 200 OK response
 				response = new Response200OK(file, Protocol.OPEN);
 			}
-		}
-		else {
+		} else {
 			// File does not exist so lets create 404 file not found code
 			response = new Response404NotFound(Protocol.CLOSE);
 		}
-		
+
 		return response;
 	}
 
