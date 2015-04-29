@@ -41,6 +41,7 @@ public class Server implements Runnable {
 	
 	private long connections;
 	private long serviceTime;
+	private PluginHandler pluginHandler;
 	
 	private WebServer window;
 	/**
@@ -54,6 +55,13 @@ public class Server implements Runnable {
 		this.connections = 0;
 		this.serviceTime = 0;
 		this.window = window;
+		
+		this.pluginHandler = new PluginHandler();
+	}
+	
+	public PluginHandler getPluginHandler()
+	{
+		return this.pluginHandler;
 	}
 
 	/**
