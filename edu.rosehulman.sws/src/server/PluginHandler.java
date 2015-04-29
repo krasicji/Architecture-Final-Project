@@ -83,7 +83,7 @@ public class PluginHandler {
 		}
 	}
 	
-	public HttpResponse handleRequest(HttpRequest request)
+	public HttpResponse handleRequest(HttpRequest request, Server server)
 	{
 		if (servlets.containsKey(request.getUri()))
 		{

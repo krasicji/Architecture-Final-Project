@@ -151,7 +151,7 @@ public class ConnectionHandler implements Runnable {
 			}
 			else 
 			{
-				response = server.getPluginHandler().handleRequest(request);
+				response = server.getPluginHandler().handleRequest(request,server);
 				//if(reqeustMethods.containsKey(request.getMethod()))
 					//response = reqeustMethods.get(request.getMethod()).handle(request, server);
 			}
