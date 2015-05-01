@@ -45,17 +45,17 @@ import protocol.Response505NotSupported;
 public class ConnectionHandler implements Runnable {
 	private Server server;
 	private Socket socket;
-	private Map<String, IRequestMethod> reqeustMethods;
+	private Map<String, Servlet> reqeustMethods;
 	
 	public ConnectionHandler(Server server, Socket socket) {
 		this.server = server;
 		this.socket = socket;
 		
-		reqeustMethods = new HashMap<String, IRequestMethod>();
-		reqeustMethods.put(Protocol.GET, new GetMethod());
-		reqeustMethods.put(Protocol.POST, new PostMethod());
-		reqeustMethods.put(Protocol.PUT, new PutMethod());
-		reqeustMethods.put(Protocol.DELETE, new DeleteMethod());
+		reqeustMethods = new HashMap<String, Servlet>();
+		reqeustMethods.put(Protocol.GET, new StaticGet());
+		reqeustMethods.put(Protocol.POST, new StaticPut());
+		reqeustMethods.put(Protocol.PUT, new StaticPost());
+		reqeustMethods.put(Protocol.DELETE, new StaticDelete());
 	}
 	
 	/**
@@ -151,9 +151,9 @@ public class ConnectionHandler implements Runnable {
 			}
 			else 
 			{
-				response = server.getPluginHandler().handleRequest(request,server);
-				//if(reqeustMethods.containsKey(request.getMethod()))
-					//response = reqeustMethods.get(request.getMethod()).handle(request, server);
+				//response = server.getPluginHandler().handleRequest(request,server);
+				if(reqeustMethods.containsKey(request.getMethod()))
+					response = reqeustMethods.get(request.getMethod()).processRequest(request, server);
 			}
 		}
 		catch(Exception e) {

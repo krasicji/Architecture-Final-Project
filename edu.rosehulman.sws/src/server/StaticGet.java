@@ -1,6 +1,6 @@
 /*
- * GetMethod.java
- * Apr 22, 2015
+ * StaticGet.java
+ * May 1, 2015
  *
  * Simple Web Server (SWS) for EE407/507 and CS455/555
  * 
@@ -25,7 +25,7 @@
  * NY 13699-5722
  * http://clarkson.edu/~rupakhcr
  */
-
+ 
 package server;
 
 import java.io.File;
@@ -40,10 +40,30 @@ import protocol.Response404NotFound;
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
-public class GetMethod implements IRequestMethod {
+public class StaticGet implements Servlet{
 
+	/* (non-Javadoc)
+	 * @see server.Servlet#getURI()
+	 */
 	@Override
-	public HttpResponse handle(HttpRequest request, Server server) {
+	public String getURI() {
+		return "/index.html";
+	}
+
+	/* (non-Javadoc)
+	 * @see server.Servlet#getMethod(protocol.HttpRequest)
+	 */
+	@Override
+	public String getMethod(HttpRequest request) {
+		return request.getMethod();
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see server.Servlet#processRequest(protocol.HttpRequest, server.Server)
+	 */
+	@Override
+	public HttpResponse processRequest(HttpRequest request, Server server) {
 		HttpResponse response = null;
 
 		// Handling GET request here
@@ -79,6 +99,7 @@ public class GetMethod implements IRequestMethod {
 		}
 
 		return response;
+
 	}
 
 }

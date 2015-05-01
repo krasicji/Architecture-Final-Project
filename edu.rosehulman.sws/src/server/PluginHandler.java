@@ -62,16 +62,16 @@ import protocol.Response400BadRequest;
 public class PluginHandler {
 
 	
-	private final static String PLATFORM_DIRECTORY = "C:/";
+	private final static String PLUGIN_DIRECTORY = "/edu.rosehulman.sws/Plugins";
 	private WatchService watcher;
 	private Map<WatchKey, Path> keys;
-	private HashMap<String, ServletPlugin> servlets;
+	private HashMap<String, Servlet> servlets;
 	private HashMap<String, String> servletFileNames;
 	
 	public PluginHandler()
 	{
-		servlets = new HashMap<String, ServletPlugin>();
-		Path dir = Paths.get(PLATFORM_DIRECTORY);
+		servlets = new HashMap<String, Servlet>();
+		Path dir = Paths.get(PLUGIN_DIRECTORY);
 		processFiles();
 		try {
 			this.watcher = FileSystems.getDefault().newWatchService();
@@ -87,14 +87,14 @@ public class PluginHandler {
 	{
 		if (servlets.containsKey(request.getUri()))
 		{
-			return servlets.get(request.getUri()).handleRequest();
+			return servlets.get(request.getUri()).processRequest(request, server);
 		}
 		
 		//No plugin for this request
 		return new Response400BadRequest(Protocol.CLOSE);
 	}
 	
-	public void addPlugin(String path, ServletPlugin plugin)
+	public void addPlugin(String path, Servlet plugin)
 	{
 		servlets.put(plugin.getURI(), plugin);
 		servletFileNames.put(path, plugin.getURI());
@@ -114,8 +114,13 @@ public class PluginHandler {
 
 	@SuppressWarnings("rawtypes")
 	private void processFiles() {
-		File folder = new File(PLATFORM_DIRECTORY);
+		File folder = new File(PLUGIN_DIRECTORY);
 		File[] fileList = folder.listFiles();
+		//TODO: Currently our Plugins directory is empty, this is a temp catch
+		if(fileList == null){
+			System.out.println("Whoops there are no plugins to load");
+			return;
+		}
 		for (File file : fileList) {
 			if (file.getName().endsWith(".jar")) {
 				try {
@@ -142,7 +147,7 @@ public class PluginHandler {
 					URLClassLoader cl = URLClassLoader
 							.newInstance(new URL[] { url });
 					Class loadedClass = cl.loadClass(extensionClassName);
-					ServletPlugin plugin = (ServletPlugin) loadedClass.newInstance();
+					Servlet plugin = (Servlet) loadedClass.newInstance();
 					addPlugin(file.getAbsolutePath(), plugin);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -236,7 +241,7 @@ public class PluginHandler {
 						URLClassLoader cl = URLClassLoader
 								.newInstance(new URL[] { url });
 						Class loadedClass = cl.loadClass(extensionClassName);
-						ServletPlugin plugin = (ServletPlugin) loadedClass.newInstance();
+						Servlet plugin = (Servlet) loadedClass.newInstance();
 						addPlugin(child.toFile().getAbsolutePath(), plugin);
 					} catch (Exception e) {
 						e.printStackTrace();

@@ -1,6 +1,6 @@
 /*
- * PostMethod.java
- * Apr 22, 2015
+ * StaticDelete.java
+ * May 1, 2015
  *
  * Simple Web Server (SWS) for EE407/507 and CS455/555
  * 
@@ -29,23 +29,48 @@
 package server;
 
 import java.io.File;
-import java.io.FileOutputStream;
 
 import protocol.HttpRequest;
 import protocol.HttpResponse;
 import protocol.Protocol;
 import protocol.Response200OK;
-import protocol.Response400BadRequest;
+import protocol.Response304NotModified;
+import protocol.Response404NotFound;
 
 /**
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
-public class PostMethod implements IRequestMethod {
+public class StaticDelete implements Servlet {
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see server.Servlet#getURI(protocol.HttpRequest)
+	 */
 	@Override
-	public HttpResponse handle(HttpRequest request, Server server) {
-		// Handling POST request here
+	public String getURI() {
+		return "/index.html";
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see server.Servlet#getMethod(protocol.HttpRequest)
+	 */
+	@Override
+	public String getMethod(HttpRequest request) {
+		return request.getMethod();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see server.Servlet#processRequest(protocol.HttpRequest, server.Server)
+	 */
+	@Override
+	public HttpResponse processRequest(HttpRequest request, Server server) {
+		// Handling DELETE request here
 		// Get relative URI path from request
 		String uri = request.getUri();
 		// Get root directory path from server
@@ -54,26 +79,19 @@ public class PostMethod implements IRequestMethod {
 		File file = new File(rootDirectory
 				+ System.getProperty("file.separator") + uri);
 
-		if (file.exists() && file.isDirectory()) {
-			// We cannot write to a directory, only a file. Bad Request
-			return new Response400BadRequest(Protocol.CLOSE);
+		if (file.exists()) {
+			// Attempts to delete the file
+			if (!file.isDirectory() && file.delete()) {
+				// File successfully deleted.
+				return new Response200OK(null, Protocol.OPEN);
+			} else {
+				// File couldn't be deleted, or file was a folder.
+				// Returning not modified because nothing changed.
+				return new Response304NotModified(Protocol.CLOSE);
+			}
+		} else {
+			// File does not exist so lets create 404 file not found code
+			return new Response404NotFound(Protocol.CLOSE);
 		}
-
-		// Get the text from the request body
-		String body = new String(request.getBody());
-
-		// Override the file with the request body
-		try {
-			FileOutputStream fileOut = new FileOutputStream(file);
-			fileOut.write(body.getBytes());
-			fileOut.close();
-		} catch (Exception e) {
-			// This should never happen.
-			e.printStackTrace();
-		}
-
-		// Lets create 200 OK response
-		return new Response200OK(file, Protocol.OPEN);
 	}
-
 }

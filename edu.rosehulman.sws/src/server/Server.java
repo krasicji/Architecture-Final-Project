@@ -57,7 +57,7 @@ public class Server implements Runnable {
 		this.window = window;
 		
 		// Add the plugin handler to watch the plugin directory
-		this.pluginHandler = new PluginHandler();
+		//this.pluginHandler = new PluginHandler();
 	}
 	
 	public PluginHandler getPluginHandler()
