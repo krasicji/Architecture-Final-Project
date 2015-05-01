@@ -62,7 +62,7 @@ import protocol.Response400BadRequest;
 public class PluginHandler {
 
 	
-	private final static String PLUGIN_DIRECTORY = "/edu.rosehulman.sws/Plugins";
+	private final static String PLUGIN_DIRECTORY = "Plugins";
 	private WatchService watcher;
 	private Map<WatchKey, Path> keys;
 	private HashMap<String, Servlet> servlets;
