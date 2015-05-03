@@ -24,8 +24,6 @@ package server;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
 
 import protocol.HttpRequest;
 import protocol.HttpResponse;
@@ -45,17 +43,10 @@ import protocol.Response505NotSupported;
 public class ConnectionHandler implements Runnable {
 	private Server server;
 	private Socket socket;
-	private Map<String, Servlet> reqeustMethods;
 	
 	public ConnectionHandler(Server server, Socket socket) {
 		this.server = server;
 		this.socket = socket;
-		
-		reqeustMethods = new HashMap<String, Servlet>();
-		reqeustMethods.put(Protocol.GET, new StaticGet());
-		reqeustMethods.put(Protocol.POST, new StaticPut());
-		reqeustMethods.put(Protocol.PUT, new StaticPost());
-		reqeustMethods.put(Protocol.DELETE, new StaticDelete());
 	}
 	
 	/**
@@ -151,9 +142,7 @@ public class ConnectionHandler implements Runnable {
 			}
 			else 
 			{
-				//response = server.getPluginHandler().handleRequest(request,server);
-				if(reqeustMethods.containsKey(request.getMethod()))
-					response = reqeustMethods.get(request.getMethod()).processRequest(request, server);
+				response = server.getPluginHandler().handleRequest(request,server);
 			}
 		}
 		catch(Exception e) {

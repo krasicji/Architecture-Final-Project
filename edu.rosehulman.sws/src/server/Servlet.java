@@ -38,6 +38,7 @@ import protocol.HttpResponse;
 public interface Servlet {
 
 	public String getURI();
-	public String getMethod(HttpRequest request);
+	public String getContextRoot();
+	public String getMethod();
 	public HttpResponse processRequest(HttpRequest request, Server server);
 }

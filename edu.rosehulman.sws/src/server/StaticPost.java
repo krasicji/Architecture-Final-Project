@@ -48,15 +48,15 @@ public class StaticPost implements Servlet{
 	 */
 	@Override
 	public String getURI() {
-		return "/index.html";
+		return Protocol.POST;
 	}
 
 	/* (non-Javadoc)
-	 * @see server.Servlet#getMethod(protocol.HttpRequest)
+	 * @see server.Servlet#getMethod()
 	 */
 	@Override
-	public String getMethod(HttpRequest request) {
-		return request.getMethod();
+	public String getMethod() {
+		return Protocol.POST;
 	}
 
 	/* (non-Javadoc)
@@ -93,6 +93,14 @@ public class StaticPost implements Servlet{
 
 				// Lets create 200 OK response
 				return new Response200OK(file, Protocol.OPEN);
+	}
+
+	/* (non-Javadoc)
+	 * @see server.Servlet#getContextRoot()
+	 */
+	@Override
+	public String getContextRoot() {
+		return "/";
 	}
 
 }

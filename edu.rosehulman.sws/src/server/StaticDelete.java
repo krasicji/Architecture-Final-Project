@@ -50,17 +50,17 @@ public class StaticDelete implements Servlet {
 	 */
 	@Override
 	public String getURI() {
-		return "/index.html";
+		return Protocol.GET;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see server.Servlet#getMethod(protocol.HttpRequest)
+	 * @see server.Servlet#getMethod()
 	 */
 	@Override
-	public String getMethod(HttpRequest request) {
-		return request.getMethod();
+	public String getMethod() {
+		return Protocol.GET;
 	}
 
 	/*
@@ -93,5 +93,13 @@ public class StaticDelete implements Servlet {
 			// File does not exist so lets create 404 file not found code
 			return new Response404NotFound(Protocol.CLOSE);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see server.Servlet#getContextRoot()
+	 */
+	@Override
+	public String getContextRoot() {
+		return "/";
 	}
 }

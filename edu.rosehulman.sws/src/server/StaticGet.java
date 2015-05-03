@@ -47,15 +47,15 @@ public class StaticGet implements Servlet{
 	 */
 	@Override
 	public String getURI() {
-		return "/index.html";
+		return Protocol.GET;
 	}
 
 	/* (non-Javadoc)
-	 * @see server.Servlet#getMethod(protocol.HttpRequest)
+	 * @see server.Servlet#getMethod()
 	 */
 	@Override
-	public String getMethod(HttpRequest request) {
-		return request.getMethod();
+	public String getMethod() {
+		return Protocol.GET;
 		
 	}
 
@@ -100,6 +100,14 @@ public class StaticGet implements Servlet{
 
 		return response;
 
+	}
+
+	/* (non-Javadoc)
+	 * @see server.Servlet#getContextRoot()
+	 */
+	@Override
+	public String getContextRoot() {
+		return "/";
 	}
 
 }

@@ -44,7 +44,6 @@ import java.nio.file.Paths;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.JarEntry;
@@ -59,24 +58,36 @@ import protocol.Response400BadRequest;
  * 
  * @author Chandan R. Rupakheti (rupakhcr@clarkson.edu)
  */
-public class PluginHandler {
+public class PluginHandler implements Runnable {
 
 	
 	private final static String PLUGIN_DIRECTORY = "Plugins";
 	private WatchService watcher;
 	private Map<WatchKey, Path> keys;
-	private HashMap<String, Servlet> servlets;
+	private HashMap<String, HashMap<String, Servlet>> plugins;
 	private HashMap<String, String> servletFileNames;
 	
 	public PluginHandler()
 	{
-		servlets = new HashMap<String, Servlet>();
+		// Keep a map of plugins and its servlets and another map joining file paths to plugins
+		plugins = new HashMap<String, HashMap<String, Servlet>>();
+		servletFileNames = new HashMap<String, String>();
+		
+		// Add static handlers - using their request method as URI to process the request correctly
+		HashMap<String, Servlet> staticHandlers = new HashMap<String, Servlet>();
+		staticHandlers.put(Protocol.GET, new StaticGet());
+		staticHandlers.put(Protocol.POST, new StaticPost());
+		staticHandlers.put(Protocol.PUT, new StaticPut());
+		staticHandlers.put(Protocol.DELETE, new StaticDelete());
+		// Add the handlers as a "plugin"
+		plugins.put("/", staticHandlers);
+		
+		// Register the plugin directory to watch for the addition / deletion of jar files
 		Path dir = Paths.get(PLUGIN_DIRECTORY);
 		processFiles();
 		try {
 			this.watcher = FileSystems.getDefault().newWatchService();
 			this.keys = new HashMap<WatchKey, Path>();
-			processEvents();
 			register(dir);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -85,42 +96,86 @@ public class PluginHandler {
 	
 	public HttpResponse handleRequest(HttpRequest request, Server server)
 	{
-		if (servlets.containsKey(request.getUri()))
+		String uri = request.getUri();
+		//Extract the context root of the request by finding the / separating it from the relative uri 
+		int crEnd = uri.indexOf("/", 1);
+		String contextRoot = uri.substring(0, crEnd == -1 ? uri.length() : crEnd);
+		
+		
+		if (plugins.containsKey(contextRoot))
 		{
-			return servlets.get(request.getUri()).processRequest(request, server);
+			// Extract the relative uri of the request
+			String relativeURI = "";
+			if (crEnd == -1 || crEnd == contextRoot.length()) {
+				int uriEnd = uri.indexOf("/", crEnd + 1);
+				relativeURI = uri.substring(crEnd, uriEnd == -1 ? uri.length() : uriEnd);
+			}
+			
+			if (plugins.get(contextRoot).containsKey(relativeURI) 
+				&& plugins.get(contextRoot).get(relativeURI).getMethod().equalsIgnoreCase(request.getMethod())) {
+				
+				// Get the correct plugin, then have the correct servlet process the request
+				return plugins.get(contextRoot).get(relativeURI).processRequest(request, server);
+			}
+			
+			// No servlet for the URI, or the request method did not match the servlet request method
+			return new Response400BadRequest(Protocol.CLOSE);
 		}
 		
-		//No plugin for this request
+		// No plugin for this request, so attempt to handle it with the static handlers
+		if (plugins.get("/").containsKey(request.getMethod())) {
+			return plugins.get("/").get(request.getMethod()).processRequest(request, server);
+		}
+		
 		return new Response400BadRequest(Protocol.CLOSE);
 	}
 	
-	public void addPlugin(String path, Servlet plugin)
+	public void addPlugin(String path, Servlet servlet)
 	{
-		servlets.put(plugin.getURI(), plugin);
-		servletFileNames.put(path, plugin.getURI());
+		// Add a map of servlets if the context root is new
+		if(!plugins.containsKey(servlet.getContextRoot())) {
+			plugins.put(servlet.getContextRoot(), new HashMap<String, Servlet>());			
+		}
+		
+		if (plugins.get(servlet.getContextRoot()).containsKey(servlet.getURI())) {
+			// The servlet already exists. Notify user of error.
+			// TODO: Error handling
+		}
+		else {
+			// Add the servlet to the existing map of servlets
+			plugins.get(servlet.getContextRoot()).put(servlet.getURI(), servlet);
+		}
+		
+		// We put the filepath of the jar file into a map with the context root so that
+		// The appropriate servlets get removed if the jar file is deleted
+		servletFileNames.put(path, servlet.getContextRoot());
 	}
 	
 	public void deletePlugin(String path)
 	{
+		// The deleted jar's path should have an associated plugin
 		if(servletFileNames.containsKey(path))
 		{
-			String URI = servletFileNames.get(path);
-			if(servlets.containsKey(URI))
+			// Delete servlets with the given context root
+			String contextRoot = servletFileNames.get(path);
+			if(plugins.containsKey(contextRoot))
 			{
-				servlets.remove(URI);
+				plugins.remove(contextRoot);
 			}
 		}
 	}
 
+	// The code below was taken from example documentation on folder watching in a link
+	// provided by Chandan during the plugin lab	
 	@SuppressWarnings("rawtypes")
 	private void processFiles() {
 		File folder = new File(PLUGIN_DIRECTORY);
 		File[] fileList = folder.listFiles();
-		//TODO: Currently our Plugins directory is empty, this is a temp catch
-		if(fileList == null){
-			System.out.println("Whoops there are no plugins to load");
-			return;
+
+		if(fileList == null) {
+			System.out.println("There are currently no plugins to load");
 		}
+		
 		for (File file : fileList) {
 			if (file.getName().endsWith(".jar")) {
 				try {
@@ -128,7 +183,8 @@ public class PluginHandler {
 					JarInputStream jarFile = new JarInputStream(
 							new FileInputStream(file.getAbsolutePath()));
 					JarEntry jarEntry;
-					String extensionClassName = "";
+					URL url = file.toURI().toURL();
+					URLClassLoader cl = URLClassLoader.newInstance(new URL[] { url });
 					while (true) {
 						jarEntry = jarFile.getNextJarEntry();
 						if (jarEntry == null) {
@@ -139,16 +195,13 @@ public class PluginHandler {
 									"/", "\\.");
 							String myClass = className.substring(0,
 									className.lastIndexOf('.'));
-							if (!isNativeClass(myClass))
-								extensionClassName = myClass;
+							if (!isNativeClass(myClass)) {
+								Class loadedClass = cl.loadClass(myClass);
+								Servlet servlet = (Servlet) loadedClass.newInstance();
+								addPlugin(file.getAbsolutePath(), servlet);
+							}
 						}
 					}
-					URL url = file.toURI().toURL();
-					URLClassLoader cl = URLClassLoader
-							.newInstance(new URL[] { url });
-					Class loadedClass = cl.loadClass(extensionClassName);
-					Servlet plugin = (Servlet) loadedClass.newInstance();
-					addPlugin(file.getAbsolutePath(), plugin);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -157,21 +210,7 @@ public class PluginHandler {
 	}
 
 	private boolean isNativeClass(String className) {
-		ArrayList<String> classes = new ArrayList<String>();
-		classes.add("homework5.pluginframework.gui.Display");
-		classes.add("homework5.pluginframework.gui.StatusPanel");
-		classes.add("homework5.pluginframework.gui.ExecutionPanel");
-		classes.add("homework5.pluginframework.gui.AbstractGUIPanel");
-		classes.add("homework5.pluginframework.gui.MainPanel");
-		classes.add("homework5.pluginframework.gui.ListingPanel");
-		classes.add("homework5.pluginframework.gui.Platform");
-		
-		for (String nativeClass : classes)
-		{
-			if(className.contains(nativeClass))
-				return true;
-		}
-		return false;
+		return className.startsWith("gui.") || className.startsWith("protocol.") || className.startsWith("server.");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -221,7 +260,10 @@ public class PluginHandler {
 								new FileInputStream(child.toFile()
 										.getAbsolutePath()));
 						JarEntry jarEntry;
-						String extensionClassName = "";
+						URL url = child.toUri().toURL();
+						URLClassLoader cl = URLClassLoader
+								.newInstance(new URL[] { url });
+						
 						while (true) {
 							jarEntry = jarFile.getNextJarEntry();
 							if (jarEntry == null) {
@@ -232,17 +274,13 @@ public class PluginHandler {
 										.replaceAll("/", "\\.");
 								String myClass = className.substring(0,
 										className.lastIndexOf('.'));
-								if (!isNativeClass(myClass))
-									extensionClassName = myClass;
+								if (!isNativeClass(myClass)) {
+									Class loadedClass = cl.loadClass(myClass);
+									Servlet servlet = (Servlet) loadedClass.newInstance();
+									addPlugin(child.toFile().getAbsolutePath(), servlet);
+								}
 							}
 						}
-
-						URL url = child.toUri().toURL();
-						URLClassLoader cl = URLClassLoader
-								.newInstance(new URL[] { url });
-						Class loadedClass = cl.loadClass(extensionClassName);
-						Servlet plugin = (Servlet) loadedClass.newInstance();
-						addPlugin(child.toFile().getAbsolutePath(), plugin);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -269,5 +307,13 @@ public class PluginHandler {
 				}
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
+	@Override
+	public void run() {
+		processEvents();
 	}
 }
