@@ -65,7 +65,7 @@ public class TestGet implements Servlet {
 
 	@Override
 	public String getContextRoot() {
-		return "/MyPlugin";
+		return "/TestPlugin";
 	}
 
 }

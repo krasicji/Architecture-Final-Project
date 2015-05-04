@@ -139,7 +139,7 @@ public class PluginHandler implements Runnable {
 		
 		if (plugins.get(servlet.getContextRoot()).containsKey(servlet.getURI())) {
 			// The servlet already exists. Notify user of error.
-			// TODO: Error handling
+			System.out.println("A servlet with the context route " + servlet.getContextRoot() + " and URI " + servlet.getURI() + " already exists.");
 		}
 		else {
 			// Add the servlet to the existing map of servlets
@@ -199,6 +199,7 @@ public class PluginHandler implements Runnable {
 								Class loadedClass = cl.loadClass(myClass);
 								Servlet servlet = (Servlet) loadedClass.newInstance();
 								addPlugin(file.getAbsolutePath(), servlet);
+								System.out.println( "Loaded " + servlet.getMethod() + " servlet " + servlet.getContextRoot() + servlet.getURI());
 							}
 						}
 					}
@@ -278,6 +279,7 @@ public class PluginHandler implements Runnable {
 									Class loadedClass = cl.loadClass(myClass);
 									Servlet servlet = (Servlet) loadedClass.newInstance();
 									addPlugin(child.toFile().getAbsolutePath(), servlet);
+									System.out.println( "Loaded " + servlet.getMethod() + " servlet " + servlet.getContextRoot() + servlet.getURI());
 								}
 							}
 						}
@@ -287,13 +289,11 @@ public class PluginHandler implements Runnable {
 				} 
 				else
 				{
+					// Deleted jar
 					if (kind == ENTRY_DELETE
 							&& child.toFile().getName().endsWith(".jar"))
-						System.out.println("DO THIS");
+						deletePlugin(child.toFile().getAbsolutePath());
 				}
-
-				// Print out event
-				System.out.format("%s: %s\n", event.kind().name(), child);
 			}
 
 			// Reset key and remove from set if directory no longer accessible
