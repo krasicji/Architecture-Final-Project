@@ -108,7 +108,7 @@ public class PluginHandler implements Runnable {
 			String relativeURI = "";
 			if (crEnd == -1 || crEnd == contextRoot.length()) {
 				int uriEnd = uri.indexOf("/", crEnd + 1);
-				relativeURI = uri.substring(crEnd, uriEnd == -1 ? uri.length() : uriEnd);
+				relativeURI = uri.substring(crEnd == -1 ? 0 : crEnd, uriEnd == -1 ? uri.length() : uriEnd);
 			}
 			
 			if (plugins.get(contextRoot).containsKey(relativeURI) 
