@@ -23,9 +23,18 @@ package server;
 
 import gui.WebServer;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.PrintStream;
+import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This represents a welcoming server for the incoming
@@ -43,6 +52,9 @@ public class Server implements Runnable {
 	private long serviceTime;
 	private PluginHandler pluginHandler;
 	
+	//Create a logger to log information for the server
+	private Logger logger; 
+	
 	private WebServer window;
 	/**
 	 * @param rootDirectory
@@ -55,6 +67,7 @@ public class Server implements Runnable {
 		this.connections = 0;
 		this.serviceTime = 0;
 		this.window = window;
+		this.logger = Logger.getLogger("myLogger");
 		
 		// Add the plugin handler to watch the plugin directory
 		this.pluginHandler = new PluginHandler();
@@ -120,13 +133,43 @@ public class Server implements Runnable {
 		this.serviceTime += value;
 	}
 
+	//Set of blacklisted IP's
+	private Set<InetAddress> blackList = null;
+	
+	//Create Hashset of IP addresses from the blacklist
+	private void populateBlackList() {
+		if(blackList != null)
+			return;
+		
+		try {
+			blackList = new HashSet<InetAddress>();
+			BufferedReader reader = new BufferedReader(new FileReader("blacklist.txt"));
+	        String line = null;
+	        
+	        while ((line = reader.readLine()) != null) {
+	        	try {
+	        		blackList.add(InetAddress.getByName(line.trim()));
+	        	}
+	        	catch(Exception e) {
+	        		e.printStackTrace();
+	        	}
+	        }
+	        reader.close();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * The entry method for the main server thread that accepts incoming
 	 * TCP connection request and creates a {@link ConnectionHandler} for
 	 * the request.
-	 */
+	 */	
 	public void run() {
 		try {
+			//Get the latest version of the blacklist
+			this.populateBlackList();
 			this.welcomeSocket = new ServerSocket(port);
 			
 			// Now keep welcoming new connections until stop flag is set to true
@@ -135,6 +178,22 @@ public class Server implements Runnable {
 				// This method block until somebody makes a request
 				Socket connectionSocket = this.welcomeSocket.accept();
 				
+				try {
+					// Check if the IP for this connection is on the blacklist
+					InetAddress address = connectionSocket.getInetAddress();
+					
+					if (blackList.contains(address)) {
+						//Log the event
+						logger.log(Level.SEVERE, "Blacklisted IP: " + address + " attempted to connect.");
+						logger.log(Level.WARNING, "Closing connection to " + address);
+						//Close the connection
+						connectionSocket.close();
+						break;
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			
 				// Come out of the loop if the stop flag is set
 				if(this.stop)
 					break;
