@@ -31,7 +31,9 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -170,6 +172,7 @@ public class Server implements Runnable {
 		try {
 			//Get the latest version of the blacklist
 			this.populateBlackList();
+			
 			this.welcomeSocket = new ServerSocket(port);
 			
 			// Now keep welcoming new connections until stop flag is set to true

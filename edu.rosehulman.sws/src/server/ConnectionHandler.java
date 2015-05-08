@@ -24,6 +24,9 @@ package server;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Comparator;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 import protocol.HttpRequest;
 import protocol.HttpResponse;
@@ -43,10 +46,15 @@ import protocol.Response505NotSupported;
 public class ConnectionHandler implements Runnable {
 	private Server server;
 	private Socket socket;
+	private Comparator<HttpRequest> comparator;
+	private Queue<HttpRequest> queue;
 	
 	public ConnectionHandler(Server server, Socket socket) {
 		this.server = server;
 		this.socket = socket;
+		this.comparator = new ContentLengthComparator();
+		//The 10 in the Queue constructor is not definitive, it will grow if it needs to
+		this.queue = new PriorityQueue<HttpRequest>(10,comparator);
 	}
 	
 	/**
@@ -56,7 +64,30 @@ public class ConnectionHandler implements Runnable {
 		return socket;
 	}
 
+	//Creates the comparator that our queue will use to compare requests by content-length
+	private class ContentLengthComparator implements Comparator<HttpRequest>
+	{
 
+		/* (non-Javadoc)
+		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+		 */
+		@Override
+		public int compare(HttpRequest x, HttpRequest y) {
+			
+			int r1Size = Integer.parseInt(x.getHeader().get("content-length"));
+			int r2Size = Integer.parseInt(y.getHeader().get("content-length"));
+			
+	        if ( r1Size < r2Size)
+	        {
+	            return -1;
+	        }
+	        if (r1Size > r2Size)
+	        {
+	            return 1;
+	        }
+	        return 0;
+		}
+	}
 	/**
 	 * The entry point for connection handler. It first parses
 	 * incoming request and creates a {@link HttpRequest} object,
@@ -93,6 +124,10 @@ public class ConnectionHandler implements Runnable {
 		HttpResponse response = null;
 		try {
 			request = HttpRequest.read(inStream);
+			
+			//Add the request to the queue
+			queue.add(request);
+			
 			System.out.println(request);
 		}
 		catch(ProtocolException pe) {
@@ -142,7 +177,8 @@ public class ConnectionHandler implements Runnable {
 			}
 			else 
 			{
-				response = server.getPluginHandler().handleRequest(request,server);
+				
+				response = server.getPluginHandler().handleRequest(queue.remove(),server);
 			}
 		}
 		catch(Exception e) {
