@@ -25,15 +25,10 @@ import gui.WebServer;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.PrintStream;
-import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
