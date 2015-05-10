@@ -197,9 +197,16 @@ public class PluginHandler implements Runnable {
 									className.lastIndexOf('.'));
 							if (!isNativeClass(myClass)) {
 								Class loadedClass = cl.loadClass(myClass);
-								Servlet servlet = (Servlet) loadedClass.newInstance();
-								addPlugin(file.getAbsolutePath(), servlet);
-								System.out.println( "Loaded " + servlet.getMethod() + " servlet " + servlet.getContextRoot() + servlet.getURI());
+								if (loadedClass.newInstance() instanceof Servlet)
+								{
+									Servlet servlet = (Servlet) loadedClass.newInstance();
+									addPlugin(file.getAbsolutePath(), servlet);
+									System.out.println( "Loaded " + servlet.getMethod() + " servlet " + servlet.getContextRoot() + servlet.getURI());
+								}
+								else
+								{
+									System.out.println( "Failed to load " + loadedClass.getName() + ". Either the class is not a servlet or the servlet is out of date.");
+								}
 							}
 						}
 					}
@@ -277,10 +284,18 @@ public class PluginHandler implements Runnable {
 										className.lastIndexOf('.'));
 								if (!isNativeClass(myClass)) {
 									Class loadedClass = cl.loadClass(myClass);
-									Servlet servlet = (Servlet) loadedClass.newInstance();
-									addPlugin(child.toFile().getAbsolutePath(), servlet);
-									System.out.println( "Loaded " + servlet.getMethod() + " servlet " + servlet.getContextRoot() + servlet.getURI());
+									if (loadedClass.newInstance() instanceof Servlet)
+									{
+										Servlet servlet = (Servlet) loadedClass.newInstance();
+										addPlugin(child.toFile().getAbsolutePath(), servlet);
+										System.out.println( "Loaded " + servlet.getMethod() + " servlet " + servlet.getContextRoot() + servlet.getURI());
+									}
+									else
+									{
+										System.out.println( "Failed to load " + loadedClass.getName() + " - the class is not a servlet.");
+									}
 								}
+								
 							}
 						}
 					} catch (Exception e) {
