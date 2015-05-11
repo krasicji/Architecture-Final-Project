@@ -1,0 +1,23 @@
+<html>
+  <body>
+    <form action="http://localhost:8080/webTest.txt" method="post" enctype="multipart/form-data" id = "form1">
+      <p>File: <input type="file" name="file1">
+     </p>
+     </form>
+  
+    
+   <form action="http://localhost:8080/webTest.txt" method="post" enctype="multipart/form-data" id= "form2">
+    <input type="text" name="textbox" />
+    </form>
+    
+   <input type="button" value="Click Me!" onclick="submitForms()" />
+
+
+<script type="text/javascript">
+submitForms = function(){
+    document.getElementById("form1").submit();
+    //document.getElementById("form2").submit();
+}
+</script>
+  </body>
+</html>
