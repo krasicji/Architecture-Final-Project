@@ -44,7 +44,7 @@ public class Response408ResponseTimeout extends HttpResponse {
 	 * @param file
 	 */
 	public Response408ResponseTimeout(String connection) {
-		super(Protocol.VERSION, Protocol.RESPONSE_TIMEOUT, Protocol.RESPONSE_TIMEOUT_TEXT, new HashMap<String, String>(), null);
+		super(Protocol.VERSION, Protocol.RESPONSE_TIMEOUT_CODE, Protocol.RESPONSE_TIMEOUT_TEXT, new HashMap<String, String>(), null);
 		
 		// Lets fill up header fields with more information
 		super.fillGeneralHeader(connection);
