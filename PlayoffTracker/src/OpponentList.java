@@ -22,7 +22,7 @@ public class OpponentList implements Servlet {
 
 	@Override
 	public String getMethod() {
-		return Protocol.POST;
+		return Protocol.GET;
 	}
 
 	@Override

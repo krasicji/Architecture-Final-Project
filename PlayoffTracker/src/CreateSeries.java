@@ -18,7 +18,7 @@ public class CreateSeries implements Servlet {
 
 	@Override
 	public String getMethod() {
-		return Protocol.GET;
+		return Protocol.POST;
 	}
 
 	@Override
