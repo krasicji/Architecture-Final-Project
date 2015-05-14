@@ -31,7 +31,7 @@ public class OpponentList implements Servlet {
 
 		// Handling GET request here
 		// Get relative URI path from request
-		String uri = request.getUri();
+		String uri = request.getUri().substring(getContextRoot().length() + getURI().length());
 		// Get root directory path from server
 		String rootDirectory = server.getRootDirectory();
 		// Combine them together to form absolute file path

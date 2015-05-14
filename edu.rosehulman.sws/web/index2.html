@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+<!-- Our own custom stylesheet -->
+<link rel="stylesheet" type="text/css" href="css/bulls.css">
+
 <script>
 function loadXMLDoc()
 {
@@ -17,19 +29,52 @@ xmlhttp.onreadystatechange=function()
   {
   if (xmlhttp.readyState==4 && xmlhttp.status==200)
     {
-		document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
+	    var new_window = window.open("r1.html");
+		
     }
   }
 xmlhttp.open("GET","/PlayoffTracker/RetrieveSeries/r1.html",true);
 xmlhttp.send();
 }
+
 </script>
+
+<script>
+function loadOpponentList(){
+var xmlhttp;
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+	xmlhttp=new XMLHttpRequest();
+  }
+else
+  {// code for IE6, IE5
+	xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xmlhttp.onreadystatechange=function()
+  {
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+	  document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
+		
+    }
+  }
+xmlhttp.open("GET","/PlayoffTracker/OpponentList/opponentList.html",true);
+xmlhttp.send();
+}
+</script>
+
 </head>
 <body>
+  
+<div class="pageTitle"><center><h1>2015 NBA Playoff Tracker for the Chicago Bulls</h1></center></div>
+<button class="btn btn-primary btn-lg sharp" type="button" onclick="loadXMLDoc()">See Schedule</button>
+<br>
+<br>
+<button class="btn btn-primary btn-lg sharp" type="button" >Edit Schedule</button>
+<br>
+<br>
+<button class="btn btn-primary btn-lg sharp" type="button" onclick="loadOpponentList()" >See Opponent List</button>
 
-<h1>Round 1</h1>
 <div id="myDiv"></div>
-<button type="button" onclick="loadXMLDoc()">Show Results</button>
-
 </body>
 </html>
