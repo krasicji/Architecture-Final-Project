@@ -27,24 +27,21 @@
   <!-- Collect the nav links, forms, and other content for toggling -->
   <div class="collapse navbar-collapse navbar-ex1-collapse">
     <ul class="nav navbar-nav">
-      <li><button class="btn btn-primary btn-lg sharp" type="button" onclick="createSeriesSchedule()" >Create Series Schedule</button></li>
-      <br>
-      <li><button class="btn btn-primary btn-lg sharp" type="button" onclick="loadOpponentList()" >See Opponent List</button></li>
-      <br>
-          <li><button class="btn btn-primary btn-lg sharp" type="button" onclick="loadXMLDoc()">See Schedule</button></li>
-          <br>
-          <li><button class="btn btn-primary btn-lg sharp" type="button" >Edit Schedule</button></li>
-          <br>
-           <li class="dropdown">
-        <a href="#" class="dropdown-toggle btn btn-primary btn-lg sharp" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
-        <ul class="dropdown-menu">
-          <li><a href="#">Action</a></li>
-          <li><a href="#">Another action</a></li>
-          <li><a href="#">Something else here</a></li>
-          <li><a href="#">Separated link</a></li>
-          <li><a href="#">One more separated link</a></li>
-        </ul>
-      </li>
+		<li><button class="btn btn-primary btn-lg sharp" type="button" onclick="createSeriesSchedule()" >Create Series Schedule</button></li>
+		<br>
+		<li><button class="btn btn-primary btn-lg sharp" type="button" onclick="loadOpponentList()" >See Opponent List</button></li>
+		<br>
+		<li class="dropdown">
+			<a class="dropdown-toggle btn btn-primary btn-lg sharp" data-toggle="dropdown">View Schedule <b class="caret"></b></a>
+			<ul class="dropdown-menu">
+				<li><a onclick="loadRound('r1')">Round 1</a></li>
+				<li><a onclick="loadRound('r2')">Round 2</a></li>
+				<li><a>Round 3</a></li>
+				<li><a>Round 4</a></li>
+			</ul>
+		</li>
+		<br>
+		<li><button class="btn btn-primary btn-lg sharp" type="button" onclick="loadRound()">Edit Schedule</button></li>
     </ul>
   </div><!-- /.navbar-collapse -->
 
