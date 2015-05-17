@@ -1,5 +1,8 @@
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStreamReader;
 
 import protocol.HttpRequest;
 import protocol.HttpResponse;
@@ -85,6 +88,50 @@ public class CreateSeries implements Servlet {
 			e.printStackTrace();
 		}
 
+		//Edit the oppenentList file
+		String opponent = params[0].split("=")[1];
+		String round = uri.substring(1, 3);
+		
+		String newOpponentList = "";
+		File opponentList = new File(rootDirectory + System.getProperty("file.separator") + "opponentList.html");
+		
+		FileInputStream fis = null;
+		BufferedReader reader = null;
+		try {
+			fis = new FileInputStream(opponentList);
+			
+			reader = new BufferedReader(new InputStreamReader(fis));
+          
+            String line = reader.readLine();
+            while(line != null){
+            	if(line.contains("id=\""+round))
+            	{
+            		int start = line.indexOf(">");
+            		int end = line.indexOf("<",1);
+            		String newLine = line.substring(0, start+1) + opponent + line.substring(end, line.length());
+            		newOpponentList += newLine + "\n";
+            	}
+            	else
+            	{
+            		newOpponentList += line + "\n";
+            	}
+                line = reader.readLine();
+            }
+ 
+            FileOutputStream opponentListOut = new FileOutputStream(opponentList);
+            opponentListOut.write(newOpponentList.getBytes());
+            opponentListOut.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (fis != null)
+					fis.close();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		
 		// Lets create 200 OK response
 		return new Response200OK(file, Protocol.OPEN);
 	}
