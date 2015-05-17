@@ -24,9 +24,10 @@
 <div class=pageTitle><h1><center>2015 NBA Playoff Tracker for the Chicago Bulls</center></h1></div>
 <br>
 <br>
-  <!-- Collect the nav links, forms, and other content for toggling -->
-  <div class="collapse navbar-collapse navbar-ex1-collapse">
-    <ul class="nav navbar-nav">
+<div id="container">
+	<!-- Collect the nav links, forms, and other content for toggling -->
+	<div class="collapse navbar-collapse navbar-ex1-collapse" id="navBar">
+	<ul class="nav navbar-nav">
 		<li><button class="btn btn-primary btn-lg sharp" type="button" onclick="createSeriesSchedule()" >Create Series Schedule</button></li>
 		<br>
 		<li><button class="btn btn-primary btn-lg sharp" type="button" onclick="loadOpponentList()" >See Opponent List</button></li>
@@ -42,12 +43,10 @@
 		</li>
 		<br>
 		<li><button class="btn btn-primary btn-lg sharp" type="button" onclick="loadRound()">Edit Schedule</button></li>
-    </ul>
-  </div><!-- /.navbar-collapse -->
-
-
-<div id="myDiv" style=visibility:hidden></div>
-
+	</ul>
+	</div><!-- /.navbar-collapse -->
+	<div id="myDiv" style=visibility:hidden></div>
+</div>
 
 </body>
 </html>

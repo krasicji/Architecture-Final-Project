@@ -78,17 +78,27 @@ function postSeriesSchedule(){
 	  {// code for IE6, IE5
 		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	  }
+	  
+	var selectedRound = document.getElementById("selectedRound");
+	var fileName = selectedRound.options[selectedRound.selectedIndex].value;
+	
+	var params = "opponent=" + document.getElementById("GameData").elements["opponent"].value + "\n";
+	for (var i = 1; i <= 7; i++) {
+		var date = "date" + i;
+		var location = "location" + i;		
+		params += "date="+document.getElementById("GameData").elements[date].value + "\n";
+		params += "location="+document.getElementById("GameData").elements[location].value + "\n";
+	}
 	xmlhttp.onreadystatechange=function()
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 	    {
 		  document.getElementById("myDiv").style.visibility="visible";
 		  document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
-			
 	    }
 	  }
-	xmlhttp.open("POST","/PlayoffTracker/CreateSeries/postSchedule.html",true);
-	xmlhttp.send();
+	xmlhttp.open("POST","/PlayoffTracker/CreateSeries/" + fileName + ".html",true);
+	xmlhttp.send(params);
 }
 
 function loadRound(round){

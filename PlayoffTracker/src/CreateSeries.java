@@ -49,33 +49,29 @@ public class CreateSeries implements Servlet {
 		//Build html for reponse
 		String html = new String("<!DOCTYPE html>\n<html>\n");
 		html+="<head>\n";
-		//Add Bootstrap styling
-		html+="<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'>\n";
-		html+="<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css'>\n";
-		html+="<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js'></script>\n";
-		html+="<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js'></script>\n";
-		html+="</head>\n";
 		html+="<body>\n";
 		html+="<br>\n";
 		html+="<h1>Series Schedule </h1>\n";
+		//Get the opponent
+		html+="<h2>Opponent: " + params[0].split("=")[1] + "</h2>\n";
 		//Create the table for games
 		html+="<table class='table'>\n";
 		html+="<thead>\n";
-		html+="<tr>\n<th>Opponent</th>\n<th>Date</th>\n<th>Location</th>\n</tr>\n</thead>\n<tbody>\n";
+		html+="<tr>\n<th>Game</th>\n<th>Date</th>\n<th>Location</th>\n<th>Result</th>\n<th>Score</th>\n</tr>\n</thead>\n<tbody>\n";
 		//Game 1
-		html+=createGameRow(params,0);
+		html+=createGameRow(1, params,1);
 		//Game 2
-		html+=createGameRow(params,3);
+		html+=createGameRow(2, params,3);
 		//Game 3
-		html+=createGameRow(params,6);
+		html+=createGameRow(3, params,5);
 		//Game 4
-		html+=createGameRow(params,9);
+		html+=createGameRow(4, params,7);
 		//Game 5
-		html+=createGameRow(params,12);
+		html+=createGameRow(5, params,9);
 		//Game 6
-		html+=createGameRow(params,15);
+		html+=createGameRow(6, params,11);
 		//Game 7
-		html+=createGameRow(params,18);
+		html+=createGameRow(7, params,13);
 		html+="</tbody>\n</table>\n";
 		html+="</body>\n";
 		html+="</html>";
@@ -95,12 +91,12 @@ public class CreateSeries implements Servlet {
 /*
  * This method creates a row for a game to be added to the response html
  */
-	private String createGameRow(String[] params, int i) {
+	private String createGameRow(int gameNumber, String[] params, int i) {
 		String row = new String();
 		row+="<tr>\n";
+		row+="<td>" + gameNumber + "</td>\n";
 		row+="<td>" + params[i].split("=")[1] + "</td>\n";
 		row+="<td>" + params[i+1].split("=")[1] + "</td>\n";
-		row+="<td>" + params[i+2].split("=")[1] + "</td>\n";
 		row+="<td></td>\n";
 		row+="<td></td>\n";
 		row+="</tr>\n";

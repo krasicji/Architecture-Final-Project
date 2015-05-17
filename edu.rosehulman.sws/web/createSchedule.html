@@ -5,121 +5,101 @@
 </head>
 <body>
 <h2>Create Series Schedule</h2>
-<h4>Game 1</h4>
-<form action="/PlayoffTracker/CreateSeries/postSchedule.html" method="post" enctype="text/plain">
+
+<form  enctype="text/plain" id="GameData">
+<div class="input-group">
+	<select id="selectedRound">
+		<option value="r1">Round 1</option>
+		<option value="r2">Round 2</option>
+		<option value="r3">Round 3</option>
+		<option value="r4">Round 4</option>
+	</select>
+</div>
+<br>
 <div class="input-group">
   <span class="input-group-addon" id="basic-addon1">Opponent</span>
   <input type="text" class="form-control" name="opponent" aria-describedby="basic-addon1">
 </div>
 <br>
+<h4>Game 1</h4>
 <div class="input-group">
   <span class="input-group-addon" id="basic-addon1">Date</span>
-  <input type="text" class="form-control" name="date" aria-describedby="basic-addon1">
+  <input type="text" class="form-control" name="date1" aria-describedby="basic-addon1">
   </div>
   <br>
   <div class="input-group">
   <span class="input-group-addon" id="basic-addon1">Location</span>
-  <input type="text" class="form-control" name="location" aria-describedby="basic-addon1">
+  <input type="text" class="form-control" name="location1" aria-describedby="basic-addon1">
   </div>
   <br>
   <h4>Game 2</h4>
-  <div class="input-group">
-  <span class="input-group-addon" id="basic-addon1">Opponent</span>
-  <input type="text" class="form-control" name="opponent" aria-describedby="basic-addon1">
-</div>
-<br>
 <div class="input-group">
   <span class="input-group-addon" id="basic-addon1">Date</span>
-  <input type="text" class="form-control" name="date" aria-describedby="basic-addon1">
+  <input type="text" class="form-control" name="date2" aria-describedby="basic-addon1">
   </div>
   <br>
   <div class="input-group">
   <span class="input-group-addon" id="basic-addon1">Location</span>
-  <input type="text" class="form-control" name="location" aria-describedby="basic-addon1">
+  <input type="text" class="form-control" name="location2" aria-describedby="basic-addon1">
   </div>
   <br>
   <h4> Game 3</h4>
-  <div class="input-group">
-  <span class="input-group-addon" id="basic-addon1">Opponent</span>
-  <input type="text" class="form-control" name="opponent" aria-describedby="basic-addon1">
-</div>
-<br>
 <div class="input-group">
   <span class="input-group-addon" id="basic-addon1">Date</span>
-  <input type="text" class="form-control" name="date" aria-describedby="basic-addon1">
+  <input type="text" class="form-control" name="date3" aria-describedby="basic-addon1">
   </div>
   <br>
   <div class="input-group">
   <span class="input-group-addon" id="basic-addon1">Location</span>
-  <input type="text" class="form-control" name="location" aria-describedby="basic-addon1">
+  <input type="text" class="form-control" name="location3" aria-describedby="basic-addon1">
   </div>
   <br>
   <h4> Game 4</h4>
-  <div class="input-group">
-  <span class="input-group-addon" id="basic-addon1">Opponent</span>
-  <input type="text" class="form-control" name="opponent" aria-describedby="basic-addon1">
-</div>
-<br>
 <div class="input-group">
   <span class="input-group-addon" id="basic-addon1">Date</span>
-  <input type="text" class="form-control" name="date" aria-describedby="basic-addon1">
+  <input type="text" class="form-control" name="date4" aria-describedby="basic-addon1">
   </div>
   <br>
   <div class="input-group">
   <span class="input-group-addon" id="basic-addon1">Location</span>
-  <input type="text" class="form-control" name="location" aria-describedby="basic-addon1">
+  <input type="text" class="form-control" name="location4" aria-describedby="basic-addon1">
   </div>
   <br>
   <h4> Game 5</h4>
-  <div class="input-group">
-  <span class="input-group-addon" id="basic-addon1">Opponent</span>
-  <input type="text" class="form-control" name="opponent" aria-describedby="basic-addon1">
-</div>
-<br>
 <div class="input-group">
   <span class="input-group-addon" id="basic-addon1">Date</span>
-  <input type="text" class="form-control" name="date" aria-describedby="basic-addon1">
+  <input type="text" class="form-control" name="date5" aria-describedby="basic-addon1">
   </div>
   <br>
   <div class="input-group">
   <span class="input-group-addon" id="basic-addon1">Location</span>
-  <input type="text" class="form-control" name="location" aria-describedby="basic-addon1">
+  <input type="text" class="form-control" name="location5" aria-describedby="basic-addon1">
   </div>
   <br>
   <h4> Game 6</h4>
-  <div class="input-group">
-  <span class="input-group-addon" id="basic-addon1">Opponent</span>
-  <input type="text" class="form-control" name="opponent" aria-describedby="basic-addon1">
-</div>
-<br>
 <div class="input-group">
   <span class="input-group-addon" id="basic-addon1">Date</span>
-  <input type="text" class="form-control" name="date" aria-describedby="basic-addon1">
+  <input type="text" class="form-control" name="date6" aria-describedby="basic-addon1">
   </div>
   <br>
   <div class="input-group">
   <span class="input-group-addon" id="basic-addon1">Location</span>
-  <input type="text" class="form-control" name="location" aria-describedby="basic-addon1">
+  <input type="text" class="form-control" name="location6" aria-describedby="basic-addon1">
   </div>
   <br>
   <h4> Game 7 </h4>
-  <div class="input-group">
-  <span class="input-group-addon" id="basic-addon1">Opponent</span>
-  <input type="text" class="form-control" name="opponent" aria-describedby="basic-addon1">
-</div>
-<br>
 <div class="input-group">
   <span class="input-group-addon" id="basic-addon1">Date</span>
-  <input type="text" class="form-control" name="date" aria-describedby="basic-addon1">
+  <input type="text" class="form-control" name="date7" aria-describedby="basic-addon1">
   </div>
   <br>
   <div class="input-group">
   <span class="input-group-addon" id="basic-addon1">Location</span>
-  <input type="text" class="form-control" name="location" aria-describedby="basic-addon1">
+  <input type="text" class="form-control" name="location7" aria-describedby="basic-addon1">
   </div>
   <br>
-  <button class="btn btn-primary btn-lg sharp">Submit</button>
  <br>
 </form>
+<button class="btn btn-primary btn-lg sharp" onclick="postSeriesSchedule()">Submit</button>
 </body>
 </html>	
