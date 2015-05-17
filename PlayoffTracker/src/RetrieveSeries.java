@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.FileOutputStream;
 
 import protocol.HttpRequest;
 import protocol.HttpResponse;
@@ -58,11 +59,33 @@ public class RetrieveSeries implements Servlet {
 				response = new Response200OK(file, Protocol.OPEN);
 			}
 		} else {
-			// File does not exist so lets create 404 file not found code
-			response = new Response404NotFound(Protocol.CLOSE);
+			// File does not exist which means no series data
+			// has been created yet.
+			file = createNoSeriesHTML(file);
+			response = new Response200OK(file, Protocol.CLOSE);
 		}
 
 		return response;
+	}
+
+	private File createNoSeriesHTML(File file) {
+		//Build html for reponse
+		String html = new String("<!DOCTYPE html>\n<html>\n");
+		html+="<body>\n";
+		html+="<br>\n";
+		html+="<div><h1>No series data for this round has been entered.</h1></div>\n";
+		html+="</body>\n";
+		html+="</html>";
+		// Override the file with the request body
+		try {
+			FileOutputStream fileOut = new FileOutputStream(file);
+			fileOut.write(html.getBytes());
+			fileOut.close();
+		} catch (Exception e) {
+			// This should never happen.
+			e.printStackTrace();
+		}
+		return file;
 	}
 
 }

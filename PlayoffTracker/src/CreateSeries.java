@@ -47,21 +47,21 @@ public class CreateSeries implements Servlet {
 		//Split the body in order to get the individual request parameters
 		String[] params = getBodyParams(body);
 		//Build html for reponse
-		String html = new String("<!DOCTYPE html><html>");
-		html+="<head>";
+		String html = new String("<!DOCTYPE html>\n<html>\n");
+		html+="<head>\n";
 		//Add Bootstrap styling
-		html+="<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'>";
-		html+="<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css'>";
-		html+="<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js'></script>";
-		html+="<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js'></script>";
-		html+="</head>";
-		html+="<body>";
-		html+="<br>";
-		html+="<h1>Series Schedule </h1>";
+		html+="<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'>\n";
+		html+="<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css'>\n";
+		html+="<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js'></script>\n";
+		html+="<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js'></script>\n";
+		html+="</head>\n";
+		html+="<body>\n";
+		html+="<br>\n";
+		html+="<h1>Series Schedule </h1>\n";
 		//Create the table for games
-		html+="<table class='table'>";
-		html+="<thead>";
-		html+="<tr><th>Opponent</th><th>Date</th><th>Location</th></tr></thead><tbody>";
+		html+="<table class='table'>\n";
+		html+="<thead>\n";
+		html+="<tr>\n<th>Opponent</th>\n<th>Date</th>\n<th>Location</th>\n</tr>\n</thead>\n<tbody>\n";
 		//Game 1
 		html+=createGameRow(params,0);
 		//Game 2
@@ -76,8 +76,8 @@ public class CreateSeries implements Servlet {
 		html+=createGameRow(params,15);
 		//Game 7
 		html+=createGameRow(params,18);
-		html+="</tbody></table>";
-		html+="</body>";
+		html+="</tbody>\n</table>\n";
+		html+="</body>\n";
 		html+="</html>";
 		// Override the file with the request body
 		try {
@@ -97,11 +97,13 @@ public class CreateSeries implements Servlet {
  */
 	private String createGameRow(String[] params, int i) {
 		String row = new String();
-		row+="<tr>";
-		row+="<td>" + params[i].split("=")[1] + "</td>";
-		row+="<td>" + params[i+1].split("=")[1] + "</td>";
-		row+="<td>" + params[i+2].split("=")[1] + "</td>";
-		row+="</tr>";
+		row+="<tr>\n";
+		row+="<td>" + params[i].split("=")[1] + "</td>\n";
+		row+="<td>" + params[i+1].split("=")[1] + "</td>\n";
+		row+="<td>" + params[i+2].split("=")[1] + "</td>\n";
+		row+="<td></td>\n";
+		row+="<td></td>\n";
+		row+="</tr>\n";
 		return row;	
 	}
 /*
