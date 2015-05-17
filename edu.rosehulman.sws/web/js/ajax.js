@@ -115,6 +115,7 @@ function loadRound(round){
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 		{
+		  document.getElementById("myDiv").style.visibility="visible";
 		  document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
 			
 		}

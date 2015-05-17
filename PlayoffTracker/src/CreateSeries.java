@@ -53,7 +53,6 @@ public class CreateSeries implements Servlet {
 		String html = new String("<!DOCTYPE html>\n<html>\n");
 		html+="<head>\n";
 		html+="<body>\n";
-		html+="<br>\n";
 		html+="<h1>Series Schedule </h1>\n";
 		//Get the opponent
 		html+="<h2>Opponent: " + params[0].split("=")[1] + "</h2>\n";
