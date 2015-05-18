@@ -42,7 +42,15 @@
 			</ul>
 		</li>
 		<br>
-		<li><button class="btn btn-primary btn-lg sharp" type="button" onclick="loadRound()">Edit Schedule</button></li>
+		<li class="dropdown">
+			<a class="dropdown-toggle btn btn-primary btn-lg sharp" data-toggle="dropdown">Edit Schedule <b class="caret"></b></a>
+			<ul class="dropdown-menu">
+				<li><a onclick="loadRoundForEdit('r1')">Round 1</a></li>
+				<li><a onclick="loadRoundForEdit('r2')">Round 2</a></li>
+				<li><a onclick="loadRoundForEdit('r3')">Round 3</a></li>
+				<li><a onclick="loadRoundForEdit('r4')">Round 4</a></li>
+			</ul>
+		</li>
 	</ul>
 	</div><!-- /.navbar-collapse -->
 	<div id="myDiv" style=visibility:hidden></div>

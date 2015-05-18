@@ -1,4 +1,8 @@
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
 
 import protocol.HttpRequest;
 import protocol.HttpResponse;
@@ -39,10 +43,51 @@ public class DeleteGames implements Servlet {
 				+ System.getProperty("file.separator") + uri);
 
 		if (file.exists()) {
-			// Attempts to delete the file
-			if (!file.isDirectory() && file.delete()) {
+			// Attempts to delete the game
+			if (!file.isDirectory()) {
+				String newFileHTML = "";
+				FileInputStream fis = null;
+				BufferedReader reader = null;
+				try {
+					fis = new FileInputStream(file);
+					String game = new String(request.getBody());
+					reader = new BufferedReader(new InputStreamReader(fis));
+		          
+		            String line = reader.readLine();
+		            boolean deleting = false;
+		            while(line != null){
+		            	if(line.contains(game))
+		            	{
+		            		deleting = true;
+		            	}
+		            	else if(deleting && line.contains("</tr>"))
+		            	{
+		            		deleting = false;
+		            	}
+		            	else if(!deleting)
+		            	{
+		            		newFileHTML += line + "\n";
+		            	}
+		            	
+		                line = reader.readLine();
+		            }
+		 
+		            FileOutputStream newFile = new FileOutputStream(file);
+		            newFile.write(newFileHTML.getBytes());
+		            newFile.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					try {
+						if (fis != null)
+							fis.close();
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+				
 				// File successfully deleted.
-				HttpResponse response = new Response200OK(null, Protocol.OPEN);
+				HttpResponse response = new Response200OK(file, Protocol.OPEN);
 				return response;
 			} else {
 				// File couldn't be deleted, or file was a folder.

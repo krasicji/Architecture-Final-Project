@@ -59,7 +59,7 @@ public class CreateSeries implements Servlet {
 		//Create the table for games
 		html+="<table class='table'>\n";
 		html+="<thead>\n";
-		html+="<tr>\n<th>Game</th>\n<th>Date</th>\n<th>Location</th>\n<th>Result</th>\n<th>Score</th>\n</tr>\n</thead>\n<tbody>\n";
+		html+="<tr>\n<th>Game</th>\n<th>Date</th>\n<th>Location</th>\n<th>Result</th>\n<th>Score</th>\n<th id=\"remove\" style=\"display:none\">Remove</th>\n</tr>\n</thead>\n<tbody>\n";
 		//Game 1
 		html+=createGameRow(1, params,1);
 		//Game 2
@@ -75,6 +75,7 @@ public class CreateSeries implements Servlet {
 		//Game 7
 		html+=createGameRow(7, params,13);
 		html+="</tbody>\n</table>\n";
+		html+="<button class=\"btn btn-primary btn-lg sharp\" id=\"submitButton\" style=\"display:none\">Submit</button>\n";
 		html+="</body>\n";
 		html+="</html>";
 		// Override the file with the request body
@@ -139,12 +140,13 @@ public class CreateSeries implements Servlet {
  */
 	private String createGameRow(int gameNumber, String[] params, int i) {
 		String row = new String();
-		row+="<tr>\n";
+		row+="<tr id=\"game" + gameNumber + "\">\n";
 		row+="<td>" + gameNumber + "</td>\n";
 		row+="<td>" + params[i].split("=")[1] + "</td>\n";
 		row+="<td>" + params[i+1].split("=")[1] + "</td>\n";
-		row+="<td></td>\n";
-		row+="<td></td>\n";
+		row+="<td name=\"result\">\n<select id=\"wL" + gameNumber + "\" style=\"display:none\">\n<option value=\"\"></option>\n<option value=\"W\">W</option>\n<option value=\"L\">L</option>\n</select>\n</td>\n";
+		row+="<td name=\"score\">\n<input id=\"score" + gameNumber + "\" type=\"text\" style=\"display:none\">\n</td>\n";
+		row+="<td value=\"game" + gameNumber + "\" id=\"deleteButton" + gameNumber + "\" style=\"display:none\">\n<button class=\"btn btn-primary btn-sm sharp\">\n<span class=\"glyphicon glyphicon-remove\"></span>\n</button>\n</td>\n";
 		row+="</tr>\n";
 		return row;	
 	}
@@ -152,7 +154,7 @@ public class CreateSeries implements Servlet {
  * This method splits the requests body into an array of parameters
  */
 	private String[] getBodyParams(String body) {
-		return body.split("\\s+");
+		return body.split("\\n+");
 	};
 	
 

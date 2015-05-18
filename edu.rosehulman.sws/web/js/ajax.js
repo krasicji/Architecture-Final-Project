@@ -1,27 +1,3 @@
-function loadXMLDoc()
-{
-var xmlhttp;
-if (window.XMLHttpRequest)
-  {// code for IE7+, Firefox, Chrome, Opera, Safari
-	xmlhttp=new XMLHttpRequest();
-  }
-else
-  {// code for IE6, IE5
-	xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-  }
-xmlhttp.onreadystatechange=function()
-  {
-  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-    {
-	    var new_window = window.open("r1.html");
-		
-    }
-  }
-xmlhttp.open("GET","/PlayoffTracker/RetrieveSeries/r1.html",true);
-xmlhttp.send();
-}
-
-
 function loadOpponentList(){
 var xmlhttp;
 if (window.XMLHttpRequest)
@@ -122,4 +98,113 @@ function loadRound(round){
 	  }
 	xmlhttp.open("GET","/PlayoffTracker/RetrieveSeries/" + round + ".html",true);
 	xmlhttp.send();
+}
+
+function loadRoundForEdit(round){
+	var xmlhttp;
+	if (window.XMLHttpRequest)
+	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+		xmlhttp=new XMLHttpRequest();
+	  }
+	else
+	  {// code for IE6, IE5
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  }
+	xmlhttp.onreadystatechange=function()
+	  {
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		{
+		  document.getElementById("myDiv").style.visibility="visible";
+		  document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
+		
+		  document.getElementById("remove").style.display="";
+		  document.getElementById("submitButton").style.display="";
+		  document.getElementById("submitButton").onclick=function() {
+			editRound(round);
+		  } 
+		  for (var i = 1; i <= 7; i++) {
+			if(document.getElementById("wL" + i) != null) {
+				document.getElementById("wL" + i).style.display="";
+				document.getElementById("score" + i).style.display="";
+				document.getElementById("deleteButton" + i).style.display="";
+				document.getElementById("deleteButton" + i).onclick=function() {
+					deleteGame(round, this.attributes["value"].value);
+				}
+			}
+		  }
+		}
+	  }
+	xmlhttp.open("GET","/PlayoffTracker/RetrieveSeries/" + round + ".html",true);
+	xmlhttp.send();
+}
+
+function editRound(round){
+	var xmlhttp;
+	var params = "";
+	for (var i = 1; i <= 7; i++) {
+		if (document.getElementById("wL"+i) != null){
+			var selectedResult = document.getElementById("wL"+i);
+			var result = selectedResult.options[selectedResult.selectedIndex].value;
+			params += "wL=" + result + "\n";
+			params += "score="+document.getElementById("score"+i).value + "\n";
+		}
+	}
+	if (window.XMLHttpRequest)
+	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+		xmlhttp=new XMLHttpRequest();
+	  }
+	else
+	  {// code for IE6, IE5
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  }
+	xmlhttp.onreadystatechange=function()
+	  {
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		{
+		  document.getElementById("myDiv").style.visibility="visible";
+		  document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
+			
+		}
+	  }
+	xmlhttp.open("PUT","/PlayoffTracker/UpdateSeries/" + round + ".html",true);
+	xmlhttp.send(params);
+}
+
+function deleteGame(round, game){
+	var xmlhttp;
+	var params = "id=\"" + game + "\"";
+	if (window.XMLHttpRequest)
+	  {// code for IE7+, Firefox, Chrome, Opera, Safari
+		xmlhttp=new XMLHttpRequest();
+	  }
+	else
+	  {// code for IE6, IE5
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	  }
+	xmlhttp.onreadystatechange=function()
+	  {
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		{
+		  document.getElementById("myDiv").style.visibility="visible";
+		  document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
+		
+		  document.getElementById("remove").style.display="";
+		  document.getElementById("submitButton").style.display="";
+		  document.getElementById("submitButton").onclick=function() {
+			editRound(round);
+		  } 
+		  for (var i = 1; i <= 7; i++) {
+			if(document.getElementById("wL" + i) != null) {
+				document.getElementById("wL" + i).style.display="";
+				document.getElementById("score" + i).style.display="";
+				document.getElementById("deleteButton" + i).style.display="";
+				document.getElementById("deleteButton" + i).onclick=function() {
+					deleteGame(round, this.attributes["value"].value);
+				}
+			}
+		  }
+		}
+	  }
+	xmlhttp.open("DELETE","/PlayoffTracker/DeleteGames/" + round + ".html",true);
+	xmlhttp.send(params);
 }
